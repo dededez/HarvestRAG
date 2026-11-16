@@ -187,6 +187,6 @@ python tools/eval_retrieval.py --candidates 15
 ---
 
 ## 延伸文档
-- [V2 架构规格说明](SPEC_V2.md)
+- [系统架构规格说明](SPEC_V2.md)
 - [快速启动与部署指南](docs/V2_QUICKSTART.md)
-- [开发交接与测试记录](docs/V2_HANDOFF.md) · [V2 验证报告](docs/V2_TEST_RESULTS.md)
+- [开发交接与测试记录](docs/V2_HANDOFF.md) · [功能验证报告](docs/V2_TEST_RESULTS.md)
