@@ -1,0 +1,17 @@
+{
+  "llm": {
+    "provider": "openai",
+    "model": "deepseek-v4-pro",
+    "api_key_env": "DEEPSEEK_API_KEY",
+    "api_base": "https://api.deepseek.com",
+    "temperature": 0.1,
+    "max_tokens": 16384,
+    "timeout_seconds": 90,
+    "tool_choice": "auto",
+    "parse_retry": 1
+  },
+  "validator": {
+    "min_confidence": 0.5,
+    "repair_budget": 1
+  }
+}

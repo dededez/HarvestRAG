@@ -1,0 +1,12 @@
+FROM python:3.12-slim
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 HF_HOME=/models
+WORKDIR /app
+COPY requirements.txt requirements-v2.txt ./
+RUN pip install --no-cache-dir -r requirements-v2.txt && python -m playwright install --with-deps chromium
+COPY agents agents
+COPY config config
+COPY fetchers fetchers
+COPY pipeline pipeline
+COPY schemas schemas
+COPY v2 v2
+CMD ["python", "-m", "v2", "serve", "--host", "0.0.0.0"]

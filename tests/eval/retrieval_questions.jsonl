@@ -1,0 +1,13 @@
+{"question": "Amazon Quick 构建 LLM Wiki 知识库的步骤是什么？", "expected_urls": ["https://aws.amazon.com/cn/blogs/china/amazon-quick-build-llm-wiki-knowledge-base/"], "kind": "in"}
+{"question": "Quick 里的 wiki 目录、frontmatter 和索引如何组织？", "expected_urls": ["https://aws.amazon.com/cn/blogs/china/amazon-quick-build-llm-wiki-knowledge-base/"], "kind": "in"}
+{"question": "ArcLibrary 是什么项目？", "expected_urls": ["https://github.com/XiaoXianHW/ArcLibrary/blob/main/README_ZH.md"], "kind": "in"}
+{"question": "ArcLibrary 的 AI 助手如何限制访问来源？", "expected_urls": ["https://github.com/XiaoXianHW/ArcLibrary/blob/main/README_ZH.md"], "kind": "in"}
+{"question": "LLM Wiki 与 RAG 有什么区别？", "expected_urls": ["https://cloud.tencent.cn/developer/article/2658818"], "kind": "in"}
+{"question": "Karpathy 提出的 LLM Wiki 架构核心思想是什么？", "expected_urls": ["https://cloud.tencent.cn/developer/article/2658818"], "kind": "in"}
+{"question": "数字人文背景下高校图书馆术语知识库如何构建与服务？", "expected_urls": ["https://www.term.org.cn/CN/10.12339/j.issn.1673-8578.2026.05.035"], "kind": "in"}
+{"question": "DeepSeek 与 Ollama 协同的图书馆本地知识库构建这篇文献讲了什么？", "expected_urls": ["https://www.cqvip.com/doc/journal/7202345820?sign=09ae0b21fe4de725809d907cbee1ab8645529a72547815d6e483dfefdcf8ab65&expireTime=1795304082636&resourceId=7202345820&type=1"], "kind": "in"}
+{"question": "查理九世是谁写的？", "expected_urls": [], "kind": "out"}
+{"question": "红烧肉的家常做法", "expected_urls": [], "kind": "out"}
+{"question": "2026 年世界杯冠军是谁？", "expected_urls": [], "kind": "out"}
+{"question": "量子纠缠的原理是什么？", "expected_urls": [], "kind": "out"}
+{"question": "Python 的 GIL 是什么？", "expected_urls": [], "kind": "out"}

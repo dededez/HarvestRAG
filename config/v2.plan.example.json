@@ -1,0 +1,16 @@
+{
+  "job_id": "17bec074-233c-4e4e-85a4-083dd90913fd",
+  "goal": "Manual URL ingestion",
+  "seed_urls": [
+    "https://docs.python.org/3/"
+  ],
+  "allowed_domains": [
+    "docs.python.org"
+  ],
+  "max_pages": 5,
+  "max_depth": 1,
+  "discovery_strategy": "links",
+  "fetch_strategy": "auto",
+  "extraction_strategy": "structured",
+  "output_target": "rag"
+}

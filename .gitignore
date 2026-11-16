@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+data/
+.pytest_cache/
+.env
+.env.v2
+deploy/api_key.txt
+memory.md
+*.log
+*.zip
+*.bak
+.DS_Store

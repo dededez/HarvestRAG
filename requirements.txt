@@ -1,0 +1,32 @@
+# Fetching / rendering
+playwright>=1.47.0
+
+# Boilerplate stripping (Phase 1 research: best benchmarked accuracy, generic)
+trafilatura>=1.12.0
+
+# Schema-constrained extraction / validation
+pydantic>=2.9.0
+anthropic>=0.34.0
+
+# Provider-agnostic LLM client (tool-use / structured output across providers)
+litellm>=1.50.0
+
+# PDF text extraction (Spec req. 8 routing)
+pypdf>=5.0.0
+
+# Config validation (obstacles.json / fetch.json against formal JSON Schema)
+jsonschema>=4.23.0
+
+# Vector store (Phase 1 research: matches confirmed small/personal scale)
+chromadb>=1.5.0
+
+# Local embeddings (Phase 1 research: free, local, BGE-M3 default;
+# all-MiniLM-L6-v2 fallback loaded via sentence-transformers directly —
+# BGE-M3 dense embeddings need no FlagEmbedding wrapper)
+sentence-transformers>=4.0.0
+
+# Minimal local UI
+streamlit>=1.38.0
+
+# Testing
+pytest>=8.3.0
