@@ -69,7 +69,7 @@ flowchart LR
 - PostgreSQL **15+** 与 Milvus **2.6+**（可通过下方 `compose.v2.yaml` 启动基础设施）
 
 ```bash
-git clone https://github.com/hajihao666/HarvestRAG.git
+git clone https://github.com/dededez/HarvestRAG.git
 cd HarvestRAG
 
 python -m venv .venv
