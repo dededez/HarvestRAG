@@ -9,7 +9,7 @@ import psycopg
 from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
-from v2.urls import canonicalize, fingerprint
+from harvest_rag.urls import canonicalize, fingerprint
 
 
 class LeaseLost(RuntimeError):

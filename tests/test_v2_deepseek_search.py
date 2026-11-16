@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 import httpx
 import pytest
-from v2 import planner
+from harvest_rag import planner
 
 
 def test_search_uses_deepseek_key_and_official_endpoint(monkeypatch):

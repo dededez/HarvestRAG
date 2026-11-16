@@ -24,10 +24,10 @@
 
 | Agent / 核心模块 | 职责与关键机制 | 核心源码 |
 |---|---|---|
-| **Planner Agent（发现规划）** | 将复杂采集目标拆解为 1–3 条互补检索词并并发调用 DeepSeek Search；对候选 URL 做规范化去重与跨查询命中排序，严格限定在真实搜索证据内选源（杜绝造链幻觉） | `v2/planner.py` · `agents/prompts/search_query.txt` |
-| **Adaptive Fetcher（自适应抓取）** | HTTP 条件请求（ETag / Last-Modified / 304 增量）+ Worker 级共享 Playwright 浏览器自动回退；内置 Cookie 横幅、弹窗、Load More 分页、CAPTCHA/Auth 检测与 429/5xx 退避 | `v2/fetch.py` · `v2/obstacles.py` · `v2/browser.py` |
+| **Planner Agent（发现规划）** | 将复杂采集目标拆解为 1–3 条互补检索词并并发调用 DeepSeek Search；对候选 URL 做规范化去重与跨查询命中排序，严格限定在真实搜索证据内选源（杜绝造链幻觉） | `harvest_rag/planner.py` · `agents/prompts/search_query.txt` |
+| **Adaptive Fetcher（自适应抓取）** | HTTP 条件请求（ETag / Last-Modified / 304 增量）+ Worker 级共享 Playwright 浏览器自动回退；内置 Cookie 横幅、弹窗、Load More 分页、CAPTCHA/Auth 检测与 429/5xx 退避 | `harvest_rag/fetch.py` · `harvest_rag/obstacles.py` · `harvest_rag/browser.py` |
 | **Extractor &amp; Validator Agent（提取与修复）** | 通用语义正文打分 + 重复列表条目切分 + Pydantic Schema 约束的 LLM 结构化提取；校验失败自动触发有界修复（Repair），CSS/JS 污染与近似重复内容自动拦截进 `REVIEW_REQUIRED` | `agents/extractor.py` · `agents/validator.py` · `pipeline/main_extract.py` |
-| **Answer Agent（可信问答）** | 基于 Milvus Dense + BM25 + RRF + `bge-reranker-v2-m3` 精排检索结果生成回答，强制校验所有引用 URL 必须出自真实检索证据（支持知识库问答 &amp; 单 URL 实时采集问答） | `agents/answer.py` · `v2/retrieval.py` |
+| **Answer Agent（可信问答）** | 基于 Milvus Dense + BM25 + RRF + `bge-reranker-v2-m3` 精排检索结果生成回答，强制校验所有引用 URL 必须出自真实检索证据（支持知识库问答 &amp; 单 URL 实时采集问答） | `agents/answer.py` · `harvest_rag/retrieval.py` |
 
 ---
 
@@ -73,7 +73,7 @@ flowchart LR
 
 #### 1. 环境准备
 - Python **3.10+**
-- PostgreSQL **15+** 与 Milvus **2.6+**（可通过下方 `compose.v2.yaml` 启动基础设施）
+- PostgreSQL **15+** 与 Milvus **2.6+**（可通过下方 `compose.yaml` 启动基础设施）
 
 ```bash
 git clone https://github.com/dededez/HarvestRAG.git
@@ -84,7 +84,7 @@ python -m venv .venv
 # macOS / Linux: source .venv/bin/activate
 
 pip install -r requirements.txt
-pip install -r requirements-v2.txt
+pip install -r requirements-engine.txt
 playwright install chromium
 ```
 
@@ -97,25 +97,25 @@ copy .env.v2.example .env.v2
 
 #### 3. 初始化数据库并启动服务
 ```bash
-python -m v2 init
-python -m v2 serve --host 127.0.0.1 --port 8000
+python -m harvest_rag init
+python -m harvest_rag serve --host 127.0.0.1 --port 8000
 # 另开终端启动采集 Worker（可启动多个 Worker 并发爬取）
-python -m v2 worker
+python -m harvest_rag worker
 ```
 浏览器访问 **`http://127.0.0.1:8000/`** 即可打开 HarvestRAG 控制台。
 
 ### 方式二：Docker Compose 部署（含可选监控）
 ```bash
-docker compose -f compose.v2.yaml up -d --build
+docker compose -f compose.yaml up -d --build
 # 如需 Prometheus + Grafana 监控面板：
-docker compose -f compose.v2.yaml -f compose.monitoring.yaml up -d
+docker compose -f compose.yaml -f compose.monitoring.yaml up -d
 ```
 
 ---
 
 ## 控制台与核心接口（Console &amp; API）
 
-Web 控制台（`v2/index.html`）提供 **6 个核心视图**：
+Web 控制台（`harvest_rag/index.html`）提供 **6 个核心视图**：
 - **采集**：手动批量提交 URL（支持 `seeds` / `links` / `sitemap` / `links+sitemap` 与 `structured` / `llm` 提取模式）及 Planner Agent 自主发现计划生成。
 - **问答**：知识库混合检索问答（可调 `k` / `candidates`、结构化证据卡片、可点击引用）与单 URL 实时抓取问答（`/live`）。
 - **知识库**：实时浏览已发布文档列表、搜索过滤及逐条查看 Milvus Chunk 原文。
@@ -136,12 +136,12 @@ Web 控制台（`v2/index.html`）提供 **6 个核心视图**：
 
 ### 常用 CLI 命令
 ```bash
-python -m v2 submit https://docs.python.org/3/ --discover links --max-pages 30
-python -m v2 plan "构建 Python asyncio 官方文档知识库" --output plan.json
-python -m v2 run urls.txt --workers 2 --extract structured
-python -m v2 query "asyncio 事件循环是如何工作的？" --answer
-python -m v2 live https://example.com/article --question "核心结论是什么？" --answer
-python -m v2 cleanup
+python -m harvest_rag submit https://docs.python.org/3/ --discover links --max-pages 30
+python -m harvest_rag plan "构建 Python asyncio 官方文档知识库" --output plan.json
+python -m harvest_rag run urls.txt --workers 2 --extract structured
+python -m harvest_rag query "asyncio 事件循环是如何工作的？" --answer
+python -m harvest_rag live https://example.com/article --question "核心结论是什么？" --answer
+python -m harvest_rag cleanup
 ```
 
 ---
@@ -150,7 +150,7 @@ python -m v2 cleanup
 
 ```text
 HarvestRAG/
-├── v2/                     # 核心引擎：API、多 Worker 调度、PostgreSQL 持久化、Milvus 存储、检索、Planner、控制台
+├── harvest_rag/            # 核心引擎：API、多 Worker 调度、PostgreSQL 持久化、Milvus 存储、检索、Planner、控制台
 │   ├── api.py              # FastAPI 服务与后台模型预热
 │   ├── worker.py           # 6 阶段可恢复执行器与版本发布防护
 │   ├── db.py & schema.sql  # PostgreSQL 任务队列、租约、Checkpoint、版本与事件审计
@@ -165,8 +165,8 @@ HarvestRAG/
 ├── deploy/                 # Prometheus 与 Grafana 数据源配置
 ├── tools/                  # 检索评估（eval_retrieval.py）与正文提取回归脚本（regression_extract.py）
 ├── tests/                  # 单元测试、Playwright UI 冒烟测试、评估集与外部服务集成测试
-├── compose.v2.yaml         # 容器编排（PostgreSQL + Milvus + API + Worker）
-└── SPEC_V2.md              # 架构规格与核心不变量说明
+├── compose.yaml            # 容器编排（PostgreSQL + Milvus + API + Worker）
+└── ARCHITECTURE.md         # 架构规格与核心不变量说明
 ```
 
 ---
@@ -187,6 +187,6 @@ python tools/eval_retrieval.py --candidates 15
 ---
 
 ## 延伸文档
-- [系统架构规格说明](SPEC_V2.md)
-- [快速启动与部署指南](docs/V2_QUICKSTART.md)
-- [开发交接与测试记录](docs/V2_HANDOFF.md) · [功能验证报告](docs/V2_TEST_RESULTS.md)
+- [系统架构规格说明](ARCHITECTURE.md)
+- [快速启动与部署指南](docs/QUICKSTART.md)
+- [开发交接与测试记录](docs/HANDOFF.md) · [功能验证报告](docs/TEST_RESULTS.md)

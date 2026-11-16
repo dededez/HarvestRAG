@@ -11,10 +11,10 @@ from lxml import etree, html
 
 from fetchers.config_loader import max_retries_for
 from fetchers.content_heuristics import looks_empty
-from v2 import obstacles
-from v2.browser import BrowserSession
-from v2.site_config import fetch_config, obstacle_config
-from v2.urls import canonicalize, host_of, validate_target
+from harvest_rag import obstacles
+from harvest_rag.browser import BrowserSession
+from harvest_rag.site_config import fetch_config, obstacle_config
+from harvest_rag.urls import canonicalize, host_of, validate_target
 
 
 class Blocked(RuntimeError):

@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Literal
 from uuid import uuid4
 from pydantic import BaseModel, Field, ConfigDict, model_validator
-from v2.urls import canonicalize, host_of
+from harvest_rag.urls import canonicalize, host_of
 
 
 class CrawlPlan(BaseModel):

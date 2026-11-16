@@ -14,12 +14,12 @@ from agents.llm.client import LiteLLMClient
 from agents.validator import validate_result
 from pipeline.chunk import chunk_result
 from schemas.extraction import ExtractionResult, ContentType
-from v2.artifacts import ArtifactStore
-from v2.browser import BrowserSession
-from v2.content import parse, quality, structured_result, near_similarity
-from v2.db import LeaseLost
-from v2.fetch import Fetcher, Blocked, ReviewRequired
-from v2.models import CrawlPlan
+from harvest_rag.artifacts import ArtifactStore
+from harvest_rag.browser import BrowserSession
+from harvest_rag.content import parse, quality, structured_result, near_similarity
+from harvest_rag.db import LeaseLost
+from harvest_rag.fetch import Fetcher, Blocked, ReviewRequired
+from harvest_rag.models import CrawlPlan
 
 STAGES = ["FETCH", "PARSE", "EXTRACT", "VALIDATE", "CHUNK", "EMBED", "INDEX"]
 log = logging.getLogger(__name__)

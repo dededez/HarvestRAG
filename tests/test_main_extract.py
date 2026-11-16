@@ -2,8 +2,8 @@
 import pytest
 
 from pipeline.strip import strip_html
-from v2.content import parse, quality, structured_result
-from v2.fetch import ReviewRequired
+from harvest_rag.content import parse, quality, structured_result
+from harvest_rag.fetch import ReviewRequired
 
 
 def article_html() -> str:

@@ -3,9 +3,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from types import SimpleNamespace
 
 import pytest
-from v2.config import Settings
-from v2.fetch import Fetcher, Blocked, ReviewRequired, retry_after
-from v2.models import CrawlPlan
+from harvest_rag.config import Settings
+from harvest_rag.fetch import Fetcher, Blocked, ReviewRequired, retry_after
+from harvest_rag.models import CrawlPlan
 
 
 @pytest.fixture

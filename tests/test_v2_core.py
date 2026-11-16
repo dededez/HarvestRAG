@@ -3,12 +3,12 @@ from datetime import datetime, timezone
 from types import SimpleNamespace
 
 import pytest
-from v2.artifacts import ArtifactStore
-from v2.config import Settings
-from v2.db import LeaseLost
-from v2.models import CrawlPlan, QueryRequest
-from v2.urls import canonicalize, fingerprint, validate_target
-from v2.worker import Worker
+from harvest_rag.artifacts import ArtifactStore
+from harvest_rag.config import Settings
+from harvest_rag.db import LeaseLost
+from harvest_rag.models import CrawlPlan, QueryRequest
+from harvest_rag.urls import canonicalize, fingerprint, validate_target
+from harvest_rag.worker import Worker
 
 
 def test_url_identity_preserves_meaning_and_drops_tracking():
@@ -200,7 +200,7 @@ def test_config_change_requires_new_job(tmp_path):
 
 
 def test_bad_content_is_retained_for_review(tmp_path):
-    from v2.fetch import ReviewRequired
+    from harvest_rag.fetch import ReviewRequired
     worker, task, db, store, embedder, fetcher = make_worker(tmp_path)
     fetcher.content = "empty"
     with pytest.raises(ReviewRequired): worker.process(task)
@@ -208,14 +208,14 @@ def test_bad_content_is_retained_for_review(tmp_path):
 
 
 def test_planner_rejects_hallucinated_source():
-    from v2.planner import discover
+    from harvest_rag.planner import discover
     client = SimpleNamespace(complete_structured=lambda **_: {"urls": ["https://invented.example/"]})
     with pytest.raises(ValueError, match="not present"):
         discover("Python docs", search=lambda _: [{"url": "https://docs.python.org/", "title": "Python"}], client=client)
 
 
 def test_retrieval_filters_retired_versions_before_rerank():
-    from v2.retrieval import Retriever
+    from harvest_rag.retrieval import Retriever
     responses = iter([["old", "new"], ["new"]])
     db = SimpleNamespace(active_versions=lambda *args: next(responses))
     store = SimpleNamespace(collection="test", search=lambda *args: [
@@ -226,7 +226,7 @@ def test_retrieval_filters_retired_versions_before_rerank():
 
 def test_api_auth_and_plan_validation(monkeypatch):
     from fastapi.testclient import TestClient
-    from v2 import api
+    from harvest_rag import api
     monkeypatch.setattr(api, "settings", lambda: Settings(api_key="test-secret"))
     client = TestClient(api.app)  # no lifespan: no external services
     assert client.get("/health").status_code == 200
@@ -235,7 +235,7 @@ def test_api_auth_and_plan_validation(monkeypatch):
 
 
 def test_chroma_version_adapter_preserves_old_until_publication(tmp_path):
-    from v2.store import ChromaVersionStore
+    from harvest_rag.store import ChromaVersionStore
     store = ChromaVersionStore(tmp_path / "chroma", "test", 3)
     store.write("old", [{"content": "old source"}], [[1., 0., 0.]])
     store.write("new", [{"content": "new source"}], [[1., 0., 0.]])
@@ -246,7 +246,7 @@ def test_chroma_version_adapter_preserves_old_until_publication(tmp_path):
 def test_parse_passes_browser_visible_text_like_v1(monkeypatch):
     """V2 matches V1's call site: parse() forwards the browser's visible text."""
     from types import SimpleNamespace
-    import v2.content as content
+    import harvest_rag.content as content
 
     seen = {}
 
@@ -265,14 +265,14 @@ def test_parse_passes_browser_visible_text_like_v1(monkeypatch):
 
 
 def test_quality_rejects_css_js_text():
-    from v2.content import quality
-    from v2.fetch import ReviewRequired
+    from harvest_rag.content import quality
+    from harvest_rag.fetch import ReviewRequired
     with pytest.raises(ReviewRequired, match="CSS/JS"):
         quality({"text": '@charset "UTF-8";' + ".a{color:red}" * 100}, 10)
 
 
 def test_retrieval_drops_low_rerank_scores():
-    from v2.retrieval import Retriever
+    from harvest_rag.retrieval import Retriever
 
     db = SimpleNamespace(active_versions=lambda *args: ["v"])
     store = SimpleNamespace(collection="test", search=lambda *args: [
@@ -295,7 +295,7 @@ def test_retrieval_drops_low_rerank_scores():
 
 
 def test_event_logger_never_fails_the_task():
-    from v2.worker import EventLogger
+    from harvest_rag.worker import EventLogger
 
     class BrokenDB:
         def event(self, *args, **kwargs):
@@ -305,7 +305,7 @@ def test_event_logger_never_fails_the_task():
 
 
 def test_site_config_uses_v1_files():
-    from v2.site_config import fetch_config, obstacle_config
+    from harvest_rag.site_config import fetch_config, obstacle_config
     assert fetch_config()["user_agent"]
     assert obstacle_config()["cookie_banner"]["enabled"] is True
     assert obstacle_config()["load_more"]["policy"] == "paginate"
@@ -313,7 +313,7 @@ def test_site_config_uses_v1_files():
 
 def test_api_cancel_delete_clear_endpoints(monkeypatch):
     from fastapi.testclient import TestClient
-    from v2 import api
+    from harvest_rag import api
 
     class FakeDB:
         def initialize(self): pass
@@ -346,7 +346,7 @@ def test_api_cancel_delete_clear_endpoints(monkeypatch):
 
 def test_api_documents_and_chunks(monkeypatch):
     from fastapi.testclient import TestClient
-    from v2 import api
+    from harvest_rag import api
 
     class FakeDB:
         def initialize(self): pass
@@ -378,7 +378,7 @@ def test_api_documents_and_chunks(monkeypatch):
 
 
 def test_query_defaults_and_retriever_warmup():
-    from v2.retrieval import Retriever
+    from harvest_rag.retrieval import Retriever
 
     req = QueryRequest(question="test")
     assert req.candidates == 15

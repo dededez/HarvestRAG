@@ -6,7 +6,7 @@ from __future__ import annotations
 def delete_url(db, store, url: str) -> dict:
     """Remove one URL's tasks, versions, vectors and events (V1 Delete URL)."""
 
-    from v2.urls import canonicalize
+    from harvest_rag.urls import canonicalize
 
     try:
         url = canonicalize(url)

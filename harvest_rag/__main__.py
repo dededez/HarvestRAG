@@ -10,8 +10,8 @@ import threading
 import time
 from pathlib import Path
 
-from v2.models import CrawlPlan, QueryRequest
-from v2.runtime import settings, database, components, retriever
+from harvest_rag.models import CrawlPlan, QueryRequest
+from harvest_rag.runtime import settings, database, components, retriever
 
 TERMINAL = {"COMPLETED", "UNCHANGED", "BLOCKED", "REVIEW_REQUIRED", "FAILED", "DEAD_LETTER", "CANCELLED"}
 
@@ -40,7 +40,7 @@ def _run_batch(args) -> None:
     print(job_id)
     if args.workers <= 0:
         return
-    procs = [subprocess.Popen([sys.executable, "-m", "v2", "worker"]) for _ in range(args.workers)]
+    procs = [subprocess.Popen([sys.executable, "-m", "harvest_rag", "worker"]) for _ in range(args.workers)]
     try:
         while True:
             states = {row["status"] for row in db.tasks(job_id)}
@@ -58,7 +58,7 @@ def _run_batch(args) -> None:
 
 
 def _fetch(args) -> None:
-    from v2.fetch import Fetcher
+    from harvest_rag.fetch import Fetcher
     cfg, db = settings(), database()
     plan = CrawlPlan(seed_urls=[args.url], max_pages=1)
     result = Fetcher(cfg, db).fetch(plan.seed_urls[0], plan.model_dump())
@@ -94,7 +94,7 @@ def _extract(args) -> None:
                                  page_title=None, mode=args.mode, client=client,
                                  agent_cfg=load_agent_config())
     else:
-        from v2.fetch import Fetcher
+        from harvest_rag.fetch import Fetcher
         cfg, db = settings(), database()
         plan = CrawlPlan(seed_urls=[args.url], max_pages=1)
         fetched = Fetcher(cfg, db).fetch(plan.seed_urls[0], plan.model_dump())
@@ -105,10 +105,10 @@ def _extract(args) -> None:
 
 
 def _live(args) -> None:
-    from v2.content import parse, quality, structured_result
-    from v2.fetch import Fetcher
-    from v2.retrieval import answer_evidence
-    from v2.urls import canonicalize
+    from harvest_rag.content import parse, quality, structured_result
+    from harvest_rag.fetch import Fetcher
+    from harvest_rag.retrieval import answer_evidence
+    from harvest_rag.urls import canonicalize
 
     cfg, db = settings(), database()
     url = canonicalize(args.url)
@@ -210,10 +210,10 @@ def main(argv=None):
         import uvicorn
         if args.host not in {"127.0.0.1", "localhost", "::1"} and not cfg.api_key:
             parser.error("Set V2_API_KEY before binding the application to a non-loopback interface")
-        uvicorn.run("v2.api:app", host=args.host, port=args.port)
+        uvicorn.run("harvest_rag.api:app", host=args.host, port=args.port)
         return
     if args.command == "plan":
-        from v2.planner import discover
+        from harvest_rag.planner import discover
         value = discover(args.goal)
         args.output.write_text(value.model_dump_json(indent=2), encoding="utf-8")
         print(f"Plan written: {args.output}")
@@ -270,7 +270,7 @@ def main(argv=None):
         print(json.dumps(retriever().query(QueryRequest(question=args.question, answer=args.answer)),
                          ensure_ascii=False, indent=2))
     elif args.command == "delete":
-        from v2 import maintenance
+        from harvest_rag import maintenance
         print(json.dumps(maintenance.delete_url(db, components()[0], args.url), ensure_ascii=False))
     elif args.command == "events":
         if args.clear:
@@ -282,7 +282,7 @@ def main(argv=None):
     elif args.command == "cancel":
         print(json.dumps({"cancelled": db.cancel_job(args.job_id)}))
     else:
-        from v2.worker import Worker
+        from harvest_rag.worker import Worker
         store, embedder = components()
         worker = Worker(cfg, db, store, embedder)
         if args.command == "cleanup":

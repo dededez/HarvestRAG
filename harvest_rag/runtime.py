@@ -1,9 +1,9 @@
 from functools import lru_cache
 from pipeline.embed import LocalEmbedder
-from v2.config import Settings
-from v2.db import Database
-from v2.store import MilvusStore
-from v2.retrieval import Retriever
+from harvest_rag.config import Settings
+from harvest_rag.db import Database
+from harvest_rag.store import MilvusStore
+from harvest_rag.retrieval import Retriever
 
 
 @lru_cache(maxsize=1)

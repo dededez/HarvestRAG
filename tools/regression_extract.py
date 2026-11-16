@@ -50,9 +50,9 @@ def main() -> int:
     from psycopg.rows import dict_row
 
     from pipeline.chunk import chunk_result
-    from v2.artifacts import ArtifactStore
-    from v2.content import parse, quality, structured_result
-    from v2.fetch import ReviewRequired
+    from harvest_rag.artifacts import ArtifactStore
+    from harvest_rag.content import parse, quality, structured_result
+    from harvest_rag.fetch import ReviewRequired
 
     dsn = os.environ.get("V2_DATABASE_URL")
     if not dsn:

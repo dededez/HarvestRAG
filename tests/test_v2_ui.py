@@ -9,7 +9,7 @@ from playwright.sync_api import sync_playwright
 def test_console_submit_plan_and_query(tmp_path):
     submitted = []
     errors = []
-    html = (Path(__file__).resolve().parents[1] / "v2/index.html").read_text(encoding="utf-8")
+    html = (Path(__file__).resolve().parents[1] / "harvest_rag/index.html").read_text(encoding="utf-8")
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True)
         try:

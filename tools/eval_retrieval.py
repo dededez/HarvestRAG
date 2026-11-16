@@ -38,9 +38,9 @@ def main() -> int:
     from sentence_transformers import CrossEncoder
 
     from pipeline.embed import LocalEmbedder
-    from v2.config import Settings
-    from v2.db import Database
-    from v2.store import MilvusStore
+    from harvest_rag.config import Settings
+    from harvest_rag.db import Database
+    from harvest_rag.store import MilvusStore
 
     cfg = Settings.from_env()
     db = Database(cfg.database_url)

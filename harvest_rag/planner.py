@@ -10,8 +10,8 @@ from pydantic import BaseModel, Field
 from agents.config_loader import load_agent_config
 from agents.llm.client import LiteLLMClient
 from agents.llm.env import get_env
-from v2.models import CrawlPlan
-from v2.urls import canonicalize
+from harvest_rag.models import CrawlPlan
+from harvest_rag.urls import canonicalize
 
 logger = logging.getLogger(__name__)
 

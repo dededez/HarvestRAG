@@ -7,7 +7,7 @@ import re
 
 from pipeline.strip import strip_html, looks_like_css_js
 from schemas.extraction import ExtractionResult, Section
-from v2.fetch import ReviewRequired
+from harvest_rag.fetch import ReviewRequired
 
 
 def parse(fetched, logger=None):

@@ -10,9 +10,9 @@ from pathlib import Path
 
 from fastapi import FastAPI, Depends, Header, HTTPException
 from fastapi.responses import HTMLResponse, Response
-from v2.models import CrawlPlan, QueryRequest, DiscoverRequest
-from v2.runtime import settings, database, retriever, components
-from v2 import maintenance
+from harvest_rag.models import CrawlPlan, QueryRequest, DiscoverRequest
+from harvest_rag.runtime import settings, database, retriever, components
+from harvest_rag import maintenance
 
 
 def _warmup_background():
@@ -81,7 +81,7 @@ def ready():
 
 @app.post("/plans/discover", dependencies=[Depends(authorize)])
 def discover_plan(request: DiscoverRequest):
-    from v2.planner import discover
+    from harvest_rag.planner import discover
     return service_call(lambda: discover(
         request.goal, request.max_pages, request.max_depth,
         multi_query=request.multi_query,
@@ -203,8 +203,8 @@ def live(request: QueryRequest):
         found = retriever().query(request)
         if found["evidence"]:
             return {**found, "source": "corpus"}
-        from v2.fetch import Fetcher
-        from v2.content import parse, quality, structured_result
+        from harvest_rag.fetch import Fetcher
+        from harvest_rag.content import parse, quality, structured_result
         plan = CrawlPlan(seed_urls=[request.source_url], max_pages=1)
         fetched = Fetcher(settings(), database()).fetch(plan.seed_urls[0], plan.model_dump())
         parsed = parse(fetched)
@@ -216,7 +216,7 @@ def live(request: QueryRequest):
         answer = None
         message = "Fresh evidence only; submit an ingestion Job to add it to the corpus"
         if request.answer and evidence:
-            from v2.retrieval import answer_evidence
+            from harvest_rag.retrieval import answer_evidence
             answer, answer_message = answer_evidence(request.question, evidence)
             message = answer_message or message
         try:

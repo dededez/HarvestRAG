@@ -48,7 +48,7 @@ class Settings(BaseModel):
         # V1's versioned retry policy remains the default when V2_* is absent.
         if "max_attempts" not in values or "retry_base_seconds" not in values:
             try:
-                from v2.site_config import orchestrator_config
+                from harvest_rag.site_config import orchestrator_config
                 retry = orchestrator_config().get("retry", {})
                 values.setdefault("max_attempts", retry.get("max_attempts", 2))
                 values.setdefault("retry_base_seconds", retry.get("backoff_seconds", 5))
@@ -63,7 +63,7 @@ class Settings(BaseModel):
         if plan is not None:
             values["plan_extraction"] = plan.extraction_strategy
             values["plan_fetch"] = plan.fetch_strategy
-        sources = [ROOT / "config" / "agents.json", ROOT / "v2" / "content.py",
+        sources = [ROOT / "config" / "agents.json", ROOT / "harvest_rag" / "content.py",
                    ROOT / "pipeline" / "strip.py", ROOT / "pipeline" / "main_extract.py",
                    ROOT / "pipeline" / "chunk.py", ROOT / "agents" / "extractor.py",
                    ROOT / "agents" / "validator.py"]

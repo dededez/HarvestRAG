@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import threading
-from v2.urls import canonicalize
+from harvest_rag.urls import canonicalize
 
 
 def answer_evidence(question, evidence):

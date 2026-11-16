@@ -3,9 +3,9 @@ import os
 from uuid import uuid4
 
 import pytest
-from v2.config import Settings
-from v2.db import Database, LeaseLost
-from v2.models import CrawlPlan
+from harvest_rag.config import Settings
+from harvest_rag.db import Database, LeaseLost
+from harvest_rag.models import CrawlPlan
 
 
 @pytest.fixture
@@ -87,7 +87,7 @@ def test_milvus_dense_bm25_roundtrip():
     if not uri:
         pytest.skip("Set V2_TEST_MILVUS_URI for Milvus integration checks")
     from types import SimpleNamespace
-    from v2.store import MilvusStore
+    from harvest_rag.store import MilvusStore
     cfg = Settings(milvus_uri=uri, collection_prefix="test_" + uuid4().hex[:12])
     store = MilvusStore(cfg, SimpleNamespace(model_name="test", dimension=4))
     try:
